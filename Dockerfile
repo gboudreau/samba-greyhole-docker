@@ -6,6 +6,10 @@ RUN apk --no-cache add \
     samba-common-tools samba-client samba-server \
     bash ncurses curl python3 gcc libc-dev perl make rpcgen php php-mbstring php-intl php-mysqlnd file ssmtp
 
+# SSMTP (to be able to send emails)
+COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
+RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
+
 # Setup Greyhole for Samba (will not run the Greyhole daemon)
 RUN mkdir -p /usr/share/greyhole
 WORKDIR /usr/share/greyhole

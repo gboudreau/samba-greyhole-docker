@@ -2,7 +2,7 @@
 
 version=`/usr/sbin/smbd --version | awk '{print $2}' | awk -F'-' '{print $1}'`
 V=`echo ${version} | awk -F'.' '{print $1$2}'`
-curl -LO https://www.greyhole.net/releases/greyhole-samba${V}-alpine.zip
+curl -sLO https://www.greyhole.net/releases/greyhole-samba${V}-alpine.zip
 file greyhole-samba${V}-alpine.zip | grep HTML >/dev/null
 
 if [ $? -eq 0 ]; then

@@ -3,7 +3,7 @@ FROM alpine:3.10
 RUN apk --no-cache add \
     samba-common-tools samba-client samba-server \
     bash ncurses curl python3 gcc libc-dev perl make rpcgen file ssmtp supervisor \
-    php7-cli php7-pdo_mysql php7-intl php7-mbstring php7-intl php7-mysqlnd php7-json rsync lsof sysstat findutils
+    php7-cli php7-pdo_mysql php7-intl php7-mbstring php7-intl php7-mysqlnd php7-json php7-pcntl rsync lsof sysstat findutils
 
 # SSMTP (to be able to send emails)
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf

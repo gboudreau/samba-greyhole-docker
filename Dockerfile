@@ -13,7 +13,7 @@ RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
 RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/master.zip && \
     unzip greyhole-master.zip >/dev/null && \
     rm greyhole-master.zip && \
-    cd Greyhole-master && \
+    cd Greyhole-* && \
 	mkdir -p /var/spool/greyhole && \
 	chmod 777 /var/spool/greyhole && \
 	mkdir -p /usr/share/greyhole && \
@@ -39,6 +39,8 @@ ADD install_greyhole_vfs.sh .
 RUN bash ./install_greyhole_vfs.sh
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+RUN apk add rsyslog
 
 VOLUME ["/var/cache/samba", "/var/lib/samba", "/var/log/samba", "/run/samba", "/config-greyhole", "/usr/share/greyhole"]
 

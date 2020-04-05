@@ -38,6 +38,8 @@ WORKDIR /usr/share/greyhole/
 ADD install_greyhole_vfs.sh .
 RUN bash ./install_greyhole_vfs.sh
 
+COPY start_greyhole_daemon.sh /start_greyhole_daemon.sh
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 RUN apk add rsyslog

@@ -40,4 +40,5 @@ Add Greyhole's cron jobs in your favorite crontab file (`/etc/cron.d/greyhole`, 
 0 3 * * Mon-Sat  /usr/local/bin/greyhole --fsck --if-conf-changed --email-report --dont-walk-metadata-store > /dev/null
 #                Weekly (forced) fsck
 0 3 * * Sun      rm -f /usr/share/greyhole/gh-disk-usage.log ; /usr/local/bin/greyhole --fsck --email-report --dont-walk-metadata-store --disk-usage-report > /dev/null
+* * * * *        /usr/local/bin/greyhole --process-spool --keepalive > /dev/null
 ```

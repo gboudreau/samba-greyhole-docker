@@ -10,7 +10,8 @@ COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
 
 # Setup Greyhole for Samba
-RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/master.zip && \
+ARG GREYHOLE_VERSION=master
+RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$GREYHOLE_VERSION.zip && \
     unzip greyhole-master.zip >/dev/null && \
     rm greyhole-master.zip && \
     cd Greyhole-* && \

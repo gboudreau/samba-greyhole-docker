@@ -13,6 +13,12 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 COPY root/. /
 
+# Create symbolic links for the config data
+RUN ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
+    ln -s /mnt/config/etc_samba /etc/samba && \
+    ln -s /mnt/config/var_lib_samba /var/lib/samba
+
+# Install all the things!
 RUN apk --no-cache add \
     bash \
     curl \
@@ -42,10 +48,7 @@ RUN apk --no-cache add \
     ssmtp \
     sysstat \
     zlib-dev \
-    zutils && \
-    ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
-    ln -s /mnt/config/etc_samba /etc/samba && \
-    ln -s /mnt/config/var_lib_samba /var/lib/samba
+    zutils
 
 # SSMTP (to be able to send emails)
 #RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
@@ -53,7 +56,7 @@ RUN apk --no-cache add \
 # Setup Greyhole for Samba
 ARG GREYHOLE_VERSION=master
 RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$GREYHOLE_VERSION.zip && \
-    unzip greyhole-master.zip >/dev/null && \
+    unzip greyhole-master.zip > /dev/null && \
     rm greyhole-master.zip && \
     cd Greyhole-* && \
   	mkdir -p /var/spool/greyhole && \
@@ -72,14 +75,13 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     mv includes /usr/share/greyhole/ && \
     mv samba-module /usr/share/greyhole/ && \
     ln -s /usr/share/greyhole/greyhole /usr/bin/greyhole && \
-	  echo "include_path=.:/usr/share/php7:/usr/share/greyhole" > /etc/php7/conf.d/02_greyhole.ini
+	  echo "include_path=.:/usr/share/php7:/usr/share/greyhole" > /etc/php7/conf.d/02_greyhole.ini && \
+	  PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
 
 # build samba vfs
-WORKDIR /usr/share/greyhole/
-
-# For Samba 4.12 (Alpine 3.12)
-RUN PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
-RUN bash ./install_greyhole_vfs.sh
+RUN cd /usr/share/greyhole/ && \
+    chmod 755 install_greyhole_vfs.sh && \
+    ./install_greyhole_vfs.sh
 
 WORKDIR /root
 

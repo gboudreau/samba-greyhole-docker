@@ -1,0 +1,70 @@
+name: build image
+
+on:
+  pull_request:
+    branches: master
+  push:
+    branches: master
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Prepare
+        id: prepare
+        run: |
+          DOCKER_USERNAME=dragoncrafted87
+          DOCKER_IMAGE=dragoncrafted87/alpine-greyhole
+          DOCKER_PLATFORMS=linux/amd64,linux/arm64
+
+          TAGS="--tag ${DOCKER_IMAGE}:edge"
+
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            TAGS="--tag ${DOCKER_IMAGE}:${VERSION}"
+            TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
+          fi
+
+          echo ::set-output name=docker_username::${DOCKER_USERNAME}
+          echo ::set-output name=docker_image::${DOCKER_IMAGE}
+          echo ::set-output name=version::${VERSION}
+          echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
+            --build-arg VERSION=${VERSION} \
+            --build-arg BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') \
+            --build-arg VCS_REF=${GITHUB_SHA::8} \
+            ${TAGS} --file Dockerfile .
+      -
+        name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v2
+      -
+        name: Docker Buildx (build)
+        run: |
+          docker buildx build --output "type=image,push=false" ${{ steps.prepare.outputs.buildx_args }}
+      -
+        name: Docker Login
+        if: success() && github.event_name != 'pull_request'
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login --username "${{ steps.prepare.outputs.docker_username }}" --password-stdin
+      -
+        name: Docker Buildx (push)
+        if: success() && github.event_name != 'pull_request'
+        run: |
+          docker buildx build --output "type=image,push=true" ${{ steps.prepare.outputs.buildx_args }}
+      -
+        name: Clear
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          rm -f ${HOME}/.docker/config.json
+      -
+        name: notify
+        uses: wei/curl@v1
+        with:
+          args: -X POST https://hooks.microbadger.com/images/dragoncrafted87/alpine-greyhole/qZJA0N5McbDM3Lok7ls2tTKfFqo=

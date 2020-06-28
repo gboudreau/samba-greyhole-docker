@@ -1,13 +1,54 @@
-FROM alpine:3.11
+FROM dragoncrafted87/alpine-supervisord:latest
+
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.name="DragonCrafted87 Alpine Greyhole" \
+      org.label-schema.description="Alpine Image with additional controls from supervisord to enable gracefull server shudown." \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.vcs-url="https://github.com/DragonCrafted87/docker-alpine-greyhole" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.schema-version="1.0"
+
+COPY root/. /
 
 RUN apk --no-cache add \
-    samba-common-tools samba-client samba-server \
-    bash ncurses curl python3 gcc libc-dev perl make rpcgen file ssmtp supervisor gnutls-dev zlib-dev rsyslog \
-    php7-cli php7-pdo_mysql php7-intl php7-mbstring php7-intl php7-mysqlnd php7-json php7-pcntl rsync lsof sysstat findutils zutils
+    bash \
+    curl \
+    file \
+    findutils \
+    gcc \
+    gnutls-dev \
+    libc-dev \
+    lsof \
+    make \
+    ncurses \
+    patch \
+    perl \
+    php7-cli \
+    php7-intl \
+    php7-json \
+    php7-mbstring \
+    php7-mysqlnd \
+    php7-pcntl \
+    php7-pdo_mysql \
+    rpcgen \
+    rsync \
+    rsyslog \
+    samba-client \
+    samba-common-tools \
+    samba-server \
+    ssmtp \
+    sysstat \
+    zlib-dev \
+    zutils && \
+    ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
+    ln -s /mnt/config/etc_samba /etc/samba && \
+    ln -s /mnt/config/var_lib_samba /var/lib/samba
 
 # SSMTP (to be able to send emails)
-COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
-RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
+#RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
 
 # Setup Greyhole for Samba
 ARG GREYHOLE_VERSION=master
@@ -15,11 +56,11 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     unzip greyhole-master.zip >/dev/null && \
     rm greyhole-master.zip && \
     cd Greyhole-* && \
-	mkdir -p /var/spool/greyhole && \
-	chmod 777 /var/spool/greyhole && \
-	mkdir -p /usr/share/greyhole && \
-	install -m 0755 -D -p greyhole /usr/share/greyhole/greyhole && \
-	install -m 0755 -D -p greyhole-dfree /usr/bin && \
+  	mkdir -p /var/spool/greyhole && \
+  	chmod 777 /var/spool/greyhole && \
+  	mkdir -p /usr/share/greyhole && \
+  	install -m 0755 -D -p greyhole /usr/share/greyhole/greyhole && \
+  	install -m 0755 -D -p greyhole-dfree /usr/bin && \
     install -m 0755 -D -p greyhole-php /usr/bin && \
     install -m 0755 -D -p greyhole-dfree.php /usr/share/greyhole && \
     install -m 0644 -D -p greyhole.cron.d /etc/cron.d/greyhole && \
@@ -30,20 +71,16 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     mkdir -p /var/cache/greyhole-dfree && chmod 777 /var/cache/greyhole-dfree && \
     mv includes /usr/share/greyhole/ && \
     mv samba-module /usr/share/greyhole/ && \
-    ln -s /config-greyhole/greyhole.conf /etc/greyhole.conf && \
     ln -s /usr/share/greyhole/greyhole /usr/bin/greyhole && \
-	echo "include_path=.:/usr/share/php7:/usr/share/greyhole" > /etc/php7/conf.d/02_greyhole.ini
+	  echo "include_path=.:/usr/share/php7:/usr/share/greyhole" > /etc/php7/conf.d/02_greyhole.ini
 
-# Re-use pre-compiled .so or build a new one
+# build samba vfs
 WORKDIR /usr/share/greyhole/
-ADD install_greyhole_vfs.sh .
-# For Samba 4.12 (Alpine 3.12) RUN PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
+
+# For Samba 4.12 (Alpine 3.12)
+RUN PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
 RUN bash ./install_greyhole_vfs.sh
 
-COPY start_greyhole_daemon.sh /start_greyhole_daemon.sh
+WORKDIR /root
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-VOLUME ["/var/cache/samba", "/var/lib/samba", "/var/log/samba", "/run/samba", "/config-greyhole", "/usr/share/greyhole"]
-
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/docker_service_init"]

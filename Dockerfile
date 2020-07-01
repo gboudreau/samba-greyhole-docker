@@ -13,11 +13,6 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
 
 COPY root/. /
 
-# Create symbolic links for the config data
-RUN ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
-    ln -s /mnt/config/etc_samba /etc/samba && \
-    ln -s /mnt/config/var_lib_samba /var/lib/samba
-
 # Install all the things!
 RUN apk --no-cache add \
     bash \
@@ -42,16 +37,11 @@ RUN apk --no-cache add \
     rpcgen \
     rsync \
     rsyslog \
-    samba-client \
-    samba-common-tools \
-    samba-server \
+    samba \
     ssmtp \
     sysstat \
     zlib-dev \
     zutils
-
-# SSMTP (to be able to send emails)
-#RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
 
 # Setup Greyhole for Samba
 ARG GREYHOLE_VERSION=master
@@ -76,12 +66,18 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     mv samba-module /usr/share/greyhole/ && \
     ln -s /usr/share/greyhole/greyhole /usr/bin/greyhole && \
 	  echo "include_path=.:/usr/share/php7:/usr/share/greyhole" > /etc/php7/conf.d/02_greyhole.ini && \
-	  PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
-
-# build samba vfs
-RUN cd /usr/share/greyhole/ && \
+	  PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver' && \
+    cd /usr/share/greyhole/ && \
     chmod 755 install_greyhole_vfs.sh && \
     ./install_greyhole_vfs.sh
+
+# Create symbolic links for the config data
+RUN rm -f etc/greyhole.conf && \
+    ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
+    rm -rf /etc/samba && \
+    ln -s /mnt/config/etc_samba /etc/samba && \
+    rm -rf /var/lib/samba && \
+    ln -s /mnt/config/var_lib_samba /var/lib/samba
 
 WORKDIR /root
 

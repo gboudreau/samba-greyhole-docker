@@ -21,7 +21,7 @@ jobs:
         run: |
           DOCKER_USERNAME=dragoncrafted87
           DOCKER_IMAGE=dragoncrafted87/alpine-greyhole
-          DOCKER_PLATFORMS=linux/amd64,linux/arm64
+          DOCKER_PLATFORMS=linux/amd64
 
           TAGS="--tag ${DOCKER_IMAGE}:edge"
 

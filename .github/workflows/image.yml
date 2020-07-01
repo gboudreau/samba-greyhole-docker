@@ -67,4 +67,4 @@ jobs:
         name: notify
         uses: wei/curl@v1
         with:
-          args: -X POST https://hooks.microbadger.com/images/dragoncrafted87/alpine-greyhole/qZJA0N5McbDM3Lok7ls2tTKfFqo=
+          args: -X POST https://hooks.microbadger.com/images/dragoncrafted87/alpine-greyhole/ZurTbcwF7HpF8iN_fUq7VjqgY0Q=

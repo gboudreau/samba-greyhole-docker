@@ -74,6 +74,8 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
 # Create symbolic links for the config data
 RUN rm -f etc/greyhole.conf && \
     ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
+    rm -rf /var/spool/greyhole && \
+    ln -s /mnt/config/spool /var/spool/greyhole && \
     rm -rf /etc/samba && \
     ln -s /mnt/config/etc_samba /etc/samba && \
     rm -rf /var/lib/samba && \

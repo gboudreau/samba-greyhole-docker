@@ -1,4 +1,4 @@
-FROM dragoncrafted87/alpine-supervisord:latest
+FROM dragoncrafted87/alpine-samba:latest
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -37,11 +37,11 @@ RUN apk --no-cache add \
     rpcgen \
     rsync \
     rsyslog \
-    samba \
-    ssmtp \
     sysstat \
     zlib-dev \
-    zutils
+    zutils && \
+    rm -rf /var/cache/apk/* && \
+    chmod +x -R /scripts/*
 
 # Setup Greyhole for Samba
 ARG GREYHOLE_VERSION=master
@@ -61,7 +61,8 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     install -m 0755 -D -p greyhole.cron.daily /etc/cron.daily/greyhole && \
     install -m 0644 -D -p web-app/index.php /usr/share/greyhole/web-app/index.php && \
     install -m 0755 -D -p build_vfs.sh /usr/share/greyhole/build_vfs.sh && \
-    mkdir -p /var/cache/greyhole-dfree && chmod 777 /var/cache/greyhole-dfree && \
+    mkdir -p /var/cache/greyhole-dfree && \
+    chmod 777 /var/cache/greyhole-dfree && \
     mv includes /usr/share/greyhole/ && \
     mv samba-module /usr/share/greyhole/ && \
     ln -s /usr/share/greyhole/greyhole /usr/bin/greyhole && \
@@ -75,11 +76,9 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
 RUN rm -f etc/greyhole.conf && \
     ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
     rm -rf /var/spool/greyhole && \
-    ln -s /mnt/config/spool /var/spool/greyhole && \
-#    rm -rf /etc/samba && \
-#    ln -s /mnt/config/etc_samba /etc/samba && \
-    rm -rf /var/lib/samba && \
-    ln -s /mnt/config/var_lib_samba /var/lib/samba
+    ln -s /mnt/config/spool /var/spool/greyhole
+
+EXPOSE 137/udp 138/udp 139 445
 
 WORKDIR /root
 

@@ -72,13 +72,6 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     chmod 755 install_greyhole_vfs.sh && \
     ./install_greyhole_vfs.sh
 
-# Create symbolic links for the config data
-RUN rm -f etc/greyhole.conf && \
-    ln -s /mnt/config/greyhole.conf /etc/greyhole.conf && \
-    rm -rf /var/spool/greyhole && \
-    ln -s /mnt/config/spool /var/spool/greyhole && \
-    chmod 777 /var/spool/greyhole
-
 EXPOSE 137/udp 138/udp 139 445
 
 WORKDIR /root

@@ -43,7 +43,7 @@ def main():
   with open("/etc/greyhole.conf") as config:
     for line in config:
       line = line.strip()
-      if line.startswith('daemon_niceness')
+      if line.startswith('daemon_niceness'):
         niceness = int(line.split('=')[1])
         break
 

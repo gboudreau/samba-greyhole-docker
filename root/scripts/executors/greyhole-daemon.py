@@ -16,6 +16,8 @@ from time import sleep
 from python_logger import create_logger #pylint: disable=import-error
 
 GREYHOLE_PID = -1
+PHP_PID = -1
+
 
 def check_pid(pid):
     """ Check For the existence of a unix pid. """
@@ -26,7 +28,7 @@ def check_pid(pid):
     else:
         return True
 
-def stop_greyhole():
+def stop_greyhole(_signal_number, _stack_frame):
   logger = create_logger(PurePath(__file__).stem)
   logger.info('Stopping Greyhole.')
   kill(GREYHOLE_PID, SIGKILL)
@@ -38,18 +40,12 @@ signal(SIGTERM, stop_greyhole)
 def main():
   logger = create_logger(PurePath(__file__).stem)
   global GREYHOLE_PID
+  global PHP_PID
 
-  niceness = -1
-  with open("/etc/greyhole.conf") as config:
-    for line in config:
-      line = line.strip()
-      if line.startswith('daemon_niceness'):
-        niceness = int(line.split('=')[1])
-        break
+  PHP_PID = Popen(['/usr/bin/php']).pid
+  GREYHOLE_PID = Popen(['/usr/bin/greyhole', '--daemon']).pid
 
-  GREYHOLE_PID = Popen(['/bin/nice', '-n', f'{niceness}', '/usr/bin/php', '/usr/bin/greyhole', '--daemon']).pid
-
-  while check_pid(GREYHOLE_PID):
+  while check_pid(PHP_PID) and check_pid(GREYHOLE_PID):
     sleep(1)
 
   # ideally this will never happen

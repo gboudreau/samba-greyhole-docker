@@ -34,12 +34,14 @@ RUN apk --no-cache add \
     php7-mysqlnd \
     php7-pcntl \
     php7-pdo_mysql \
+    py3-pip \
     rpcgen \
     rsync \
     rsyslog \
     sysstat \
     zlib-dev \
     zutils && \
+    pip3 --no-cache-dir install mysql-connector-python && \
     rm -rf /var/cache/apk/* && \
     chmod +x -R /scripts/*
 

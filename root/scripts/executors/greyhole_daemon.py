@@ -47,8 +47,16 @@ def main():
   logger.info('Starting PHP')
   PHP_PID = Popen(['/usr/bin/php']).pid
 
+  # default to the same niceness samba is set to
   logger.info('Starting Greyhole')
-  GREYHOLE_PID = Popen(['/usr/bin/greyhole', '--daemon']).pid
+  niceness = 2
+  with open("/etc/greyhole.conf") as config:
+    for line in config:
+      line = line.strip()
+      if line.startswith('daemon_niceness'):
+        niceness = int(line.split('=')[1])
+        break
+  GREYHOLE_PID = Popen(['/bin/nice', '-n', f'{niceness}', '/usr/bin/greyhole', '--daemon']).pid
 
   while check_pid(PHP_PID) and check_pid(GREYHOLE_PID):
     sleep(1)

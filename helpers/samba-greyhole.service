@@ -19,14 +19,15 @@ ExecStart=/usr/bin/docker run --rm \
   -p 138:138/udp \
   -p 139:139/tcp \
   -p 445:445/tcp \
+  -p 8012:8012 \
   --privileged \
   --mount type=tmpfs,destination=/tmp \
   -v /etc/passwd:/etc/passwd:ro \
   -v /etc/shadow:/etc/shadow:ro \
-  -v /path/to/etc-samba:/etc/samba:ro \
+  -v /path/to/etc-samba:/etc/samba \
   -v /path/to/var-lib-samba:/var/lib/samba \
   -v /usr/share/greyhole:/usr/share/greyhole \
-  -v /path/to/greyhole.conf:/config-greyhole/greyhole.conf:ro \
+  -v /path/to/greyhole.conf:/config-greyhole/greyhole.conf \
   -v /opt/samba-shares:/opt/samba-shares \
   -v /mnt:/mnt \
   samba-greyhole

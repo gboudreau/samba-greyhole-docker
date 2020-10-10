@@ -5,7 +5,7 @@ ARG VCS_REF
 ARG VERSION
 LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.name="DragonCrafted87 Alpine Greyhole" \
-      org.label-schema.description="Alpine Image with additional controls from supervisord to enable gracefull server shudown." \
+      org.label-schema.description="Alpine Supervisord Image with Greyhole installed." \
       org.label-schema.vcs-ref=$VCS_REF \
       org.label-schema.vcs-url="https://github.com/DragonCrafted87/docker-alpine-greyhole" \
       org.label-schema.version=$VERSION \
@@ -34,7 +34,6 @@ RUN apk --no-cache add \
     php7-mysqlnd \
     php7-pcntl \
     php7-pdo_mysql \
-    py3-pip \
     rpcgen \
     rsync \
     rsyslog \

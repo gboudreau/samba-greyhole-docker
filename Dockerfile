@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM alpine:3.12
 
 RUN apk --no-cache add \
     samba-common-tools samba-client samba-server \
@@ -62,7 +62,8 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
 # Re-use pre-compiled .so or build a new one
 WORKDIR /usr/share/greyhole/
 ADD install_greyhole_vfs.sh .
-# For Samba 4.12 (Alpine 3.12) RUN PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
+# For Samba 4.12 (Alpine 3.12):
+RUN PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
 RUN bash ./install_greyhole_vfs.sh
 
 COPY start_greyhole_daemon.sh /start_greyhole_daemon.sh

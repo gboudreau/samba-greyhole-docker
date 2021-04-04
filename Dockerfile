@@ -1,9 +1,10 @@
-FROM alpine:3.12
+FROM alpine:3.13
 
 RUN apk --no-cache add \
     samba-common-tools samba-client samba-server \
     bash ncurses curl python3 gcc libc-dev perl make rpcgen file ssmtp supervisor gnutls-dev zlib-dev rsyslog \
-    php7-cli php7-pdo_mysql php7-intl php7-mbstring php7-intl php7-mysqlnd php7-json php7-pcntl rsync lsof sysstat findutils zutils
+    php8-cli php8-pdo_mysql php8-intl php8-mbstring php8-intl php8-mysqlnd php8-json php8-pcntl rsync lsof sysstat findutils patch \
+    && ln -s /usr/bin/php8 /usr/bin/php
 
 # SSMTP (to be able to send emails)
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
@@ -57,13 +58,11 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     mv samba-module /usr/share/greyhole/ && \
     ln -s /config-greyhole/greyhole.conf /etc/greyhole.conf && \
     ln -s /usr/share/greyhole/greyhole /usr/bin/greyhole && \
-	echo "include_path=.:/usr/share/php7:/usr/share/greyhole" > /etc/php7/conf.d/02_greyhole.ini
+	echo "include_path=.:/usr/share/php8:/usr/share/greyhole" > /etc/php8/conf.d/02_greyhole.ini
 
 # Re-use pre-compiled .so or build a new one
 WORKDIR /usr/share/greyhole/
 ADD install_greyhole_vfs.sh .
-# For Samba 4.12 (Alpine 3.12):
-RUN PERL_MM_USE_DEFAULT=1 perl -MCPAN -e 'install Parse::Yapp::Driver'
 RUN bash ./install_greyhole_vfs.sh
 
 COPY start_greyhole_daemon.sh /start_greyhole_daemon.sh

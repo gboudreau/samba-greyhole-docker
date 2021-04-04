@@ -3,7 +3,7 @@ FROM alpine:3.13
 RUN apk --no-cache add \
     samba-common-tools samba-client samba-server \
     bash ncurses curl python3 gcc libc-dev perl make rpcgen file ssmtp supervisor gnutls-dev zlib-dev rsyslog \
-    php8-cli php8-pdo_mysql php8-intl php8-mbstring php8-intl php8-mysqlnd php8-json php8-pcntl rsync lsof sysstat findutils patch \
+    php8-cli php8-pdo_mysql php8-intl php8-mbstring php8-intl php8-mysqlnd php8-json php8-pcntl rsync lsof sysstat findutils gzip patch \
     && ln -s /usr/bin/php8 /usr/bin/php
 
 # SSMTP (to be able to send emails)

@@ -12,6 +12,7 @@ RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
 
 # Setup Greyhole for Samba
 ARG GREYHOLE_VERSION=master
+ADD "https://api.github.com/repos/gboudreau/Greyhole/commits?per_page=1" /tmp/latest_commit
 RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$GREYHOLE_VERSION.zip && \
     unzip greyhole-master.zip >/dev/null && \
     rm greyhole-master.zip && \
@@ -62,7 +63,7 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
 
 # Re-use pre-compiled .so or build a new one
 WORKDIR /usr/share/greyhole/
-ADD install_greyhole_vfs.sh .
+COPY install_greyhole_vfs.sh .
 RUN bash ./install_greyhole_vfs.sh
 
 COPY start_greyhole_daemon.sh /start_greyhole_daemon.sh

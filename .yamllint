@@ -1,0 +1,11 @@
+extends: default
+
+rules:
+    indentation:
+        spaces: 4
+        indent-sequences: consistent
+        check-multi-line-strings: true
+    document-start:
+        present: false
+    hyphens:
+        max-spaces-after: 3

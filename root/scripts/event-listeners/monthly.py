@@ -1,1 +1,0 @@
-greyhole --fsck --email-report --checksums

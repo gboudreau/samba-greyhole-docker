@@ -57,9 +57,6 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
   	install -m 0755 -D -p greyhole-dfree /usr/bin && \
     install -m 0755 -D -p greyhole-php /usr/bin && \
     install -m 0755 -D -p greyhole-dfree.php /usr/share/greyhole && \
-#    install -m 0644 -D -p greyhole.cron.d /etc/cron.d/greyhole && \
-#    install -m 0755 -D -p greyhole.cron.weekly /etc/cron.weekly/greyhole && \
-#    install -m 0755 -D -p greyhole.cron.daily /etc/cron.daily/greyhole && \
     install -m 0644 -D -p web-app/index.php /usr/share/greyhole/web-app/index.php && \
     install -m 0755 -D -p build_vfs.sh /usr/share/greyhole/build_vfs.sh && \
     mkdir -p /var/cache/greyhole-dfree && \
@@ -76,5 +73,3 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
 EXPOSE 137/udp 138/udp 139 445
 
 WORKDIR /root
-
-CMD ["/docker_service_init"]

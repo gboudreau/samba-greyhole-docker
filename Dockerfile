@@ -8,7 +8,7 @@ RUN apk --no-cache add \
 
 # SSMTP (to be able to send emails)
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
-RUN echo "hostname=`hostname`.home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
+RUN echo "hostname=$(hostname).home.danslereseau.com" >> /etc/ssmtp/ssmtp.conf
 
 # Setup Greyhole for Samba
 ARG GREYHOLE_VERSION=master

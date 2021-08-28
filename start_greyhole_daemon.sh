@@ -2,7 +2,8 @@
 
 n=$(grep daemon_niceness /etc/greyhole.conf | grep -v '#.*daemon_niceness' | sed 's/^.*= *\(.*\) *$/\1/')
 /bin/nice -n "$n" /usr/bin/php /usr/bin/greyhole --daemon &
-PID=$(ps ax | grep "greyhole --daemon" | grep -v grep | grep -v bash | tail -1 | awk '{print $1}')
+sleep 1
+PID=$(ps ax | grep "greyhole --daemon" | grep -v grep | grep -v bash | head -1 | awk '{print $1}')
 echo "Greyhole started with PID $PID."
 export PID
 

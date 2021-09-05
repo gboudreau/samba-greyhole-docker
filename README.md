@@ -14,7 +14,7 @@ You will need to edit your `greyhole.conf` to point to your host's IP address, i
 If you'd like to be able to view/grep the Greyhole log files, make sure you put them in a folder that is mounted from your host.  
 Ref: `greyhole_log_file` & `greyhole_error_log_file` in your `greyhole.conf`)
 
-Symlink `helpers/greyhole.sh` as `/usr/local/bin/greyhole` on your host, to be able to execute any `greyhole ...` command on you host (`greyhole --fsck...`, `greyhole --stats`, `greyhole --logs`, etc.)
+Symlink `helpers/greyhole.sh` as `/usr/local/bin/greyhole` on your host, to be able to execute any `greyhole ...` command on you host (`greyhole --fsck ...`, `greyhole --stats`, `greyhole --logs`, etc.)
 
 `helpers/restart-greyhole.sh` and `helpers/restart-samba.sh` can be used to restart the Greyhole and Samba daemons, within a running container, without having to restart the container itself.
 
@@ -30,6 +30,7 @@ git clone https://github.com/gboudreau/samba-greyhole-docker.git "$TARGET_PATH"
 # Change WorkingDirectory in helpers/samba-greyhole.service; also change the folders & files mounted using -v
 mkdir -p /usr/share/greyhole/
 ln -s "$TARGET_PATH/helpers/greyhole.sh" /usr/local/bin/greyhole
+ln -s "$TARGET_PATH/helpers/greyhole-cp.sh" /usr/local/bin/cpgh
 ln -s "$TARGET_PATH/helpers/samba-greyhole.service" /etc/systemd/system/samba-greyhole.service
 systemctl enable samba-greyhole
 ```

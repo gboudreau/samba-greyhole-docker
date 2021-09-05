@@ -20,9 +20,9 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
 	mkdir -p /var/spool/greyhole && \
 	chmod 777 /var/spool/greyhole && \
 	mkdir -p /usr/share/greyhole && \
-	install -m 0755 -D -p greyhole /usr/share/greyhole/greyhole && \
-	install -m 0755 -D -p greyhole-dfree /usr/bin && \
-    install -m 0755 -D -p greyhole-php /usr/bin && \
+	install -m 0755 -D -p greyhole /usr/share/greyhole && \
+	install -m 0755 -D -p greyhole-dfree /usr/share/greyhole && \
+    install -m 0755 -D -p greyhole-php /usr/share/greyhole && \
     install -m 0755 -D -p greyhole-dfree.php /usr/share/greyhole && \
     install -m 0644 -D -p greyhole.cron.d /etc/cron.d/greyhole && \
     install -m 0755 -D -p greyhole.cron.weekly /etc/cron.weekly/greyhole && \
@@ -59,6 +59,9 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
     mv samba-module /usr/share/greyhole/ && \
     ln -s /config-greyhole/greyhole.conf /etc/greyhole.conf && \
     ln -s /usr/share/greyhole/greyhole /usr/bin/greyhole && \
+    ln -s /usr/share/greyhole/greyhole-dfree /usr/bin/greyhole-dfree && \
+    ln -s /usr/share/greyhole/greyhole-php /usr/bin/greyhole-php && \
+    ln -s /usr/share/greyhole/greyhole /usr/bin/cpgh && \
 	echo "include_path=.:/usr/share/php8:/usr/share/greyhole" > /etc/php8/conf.d/02_greyhole.ini
 
 # Re-use pre-compiled .so or build a new one

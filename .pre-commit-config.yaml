@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.1.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
@@ -18,7 +18,7 @@ repos:
         -   --indent
         -   '4'
 -   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.1.0
+    rev: v2.2.0
     hooks:
     -   id: pretty-format-yaml
         args:
@@ -26,7 +26,7 @@ repos:
         -   --indent
         -   '4'
 -   repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.7
+    rev: 0.7.11
     hooks:
     -   id: mdformat
         args:
@@ -36,20 +36,20 @@ repos:
         -   mdformat-gfm
         -   mdformat-black
 -   repo: https://github.com/adrienverge/yamllint
-    rev: v1.26.1
+    rev: v1.26.3
     hooks:
     -   id: yamllint
 -   repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.27.1
+    rev: v0.30.0
     hooks:
     -   id: markdownlint
 -   repo: https://github.com/psf/black
-    rev: 21.6b0
+    rev: 21.12b0
     hooks:
     -   id: black
         language_version: python3
 -   repo: https://github.com/pycqa/isort
-    rev: 5.9.1
+    rev: 5.10.1
     hooks:
     -   id: isort
         args:
@@ -65,7 +65,7 @@ repos:
         -   --extend-ignore=E203
         -   --max-line-length=88
 -   repo: https://github.com/lovesegfault/beautysh
-    rev: v6.1.0
+    rev: v6.2.1
     hooks:
     -   id: beautysh
         types: [bash, shell]
@@ -73,6 +73,6 @@ repos:
         -   --indent-size
         -   '4'
 -   repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.7.2.1
+    rev: v0.8.0.3
     hooks:
     -   id: shellcheck

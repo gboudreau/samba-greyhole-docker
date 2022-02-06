@@ -25,7 +25,9 @@ if file "$vfs_file" | grep HTML >/dev/null; then
     zip -r "$vfs_file" vfs-build/
     apk del zip >/dev/null
     echo
-    echo "$vfs_file file created. You can copy it to the host using: sudo docker cp container_name_here:$(pwd)/$vfs_file ."
+    echo "$vfs_file file created. You can copy it to the host using:"
+    echo "  id=\$(sudo docker create samba-greyhole:latest)"
+    sudo "  sudo docker cp \$id:$(pwd)/$vfs_file ."
     echo
 else
     echo "Using pre-compiled greyhole.so VFS from greyhole.net/releases/$vfs_file"

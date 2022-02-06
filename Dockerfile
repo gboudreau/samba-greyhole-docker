@@ -1,9 +1,9 @@
-FROM alpine:3.13
+FROM alpine:3.15
 
 RUN apk --no-cache add \
     samba-common-tools samba-client samba-server \
     bash ncurses curl python3 gcc libc-dev perl make rpcgen file ssmtp supervisor gnutls-dev zlib-dev rsyslog \
-    php8-cli php8-pdo_mysql php8-intl php8-mbstring php8-intl php8-mysqlnd php8-json php8-pcntl rsync lsof sysstat findutils gzip patch \
+    php8-cli php8-pdo_mysql php8-intl php8-mbstring php8-intl php8-mysqlnd php8-json php8-pcntl rsync lsof sysstat findutils gzip patch e2fsprogs-dev heimdal-dev bison flex \
     && ln -s /usr/bin/php8 /usr/bin/php
 
 # SSMTP (to be able to send emails)
@@ -66,6 +66,7 @@ RUN curl -Lo greyhole-master.zip https://github.com/gboudreau/Greyhole/archive/$
 
 # Re-use pre-compiled .so or build a new one
 WORKDIR /usr/share/greyhole/
+COPY alpine-samba-patches/*.patch ./
 COPY install_greyhole_vfs.sh .
 RUN bash ./install_greyhole_vfs.sh
 

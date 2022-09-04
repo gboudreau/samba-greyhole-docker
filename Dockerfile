@@ -15,9 +15,11 @@ EOF
 
 # Setup Greyhole for Samba
 ADD --link --keep-git-dir=false https://github.com/gboudreau/Greyhole.git /Greyhole-master
+
+WORKDIR /Greyhole-master
 RUN <<EOF 
     set -xe
-    cd /Greyhole-master
+
     # Greyhole
 	mkdir -p /var/spool/greyhole
 	chmod 777 /var/spool/greyhole
@@ -30,6 +32,7 @@ RUN <<EOF
     install -m 0755 -D -p greyhole.cron.weekly /etc/cron.weekly/greyhole
     install -m 0755 -D -p greyhole.cron.daily /etc/cron.daily/greyhole
     install -m 0755 -D -p build_vfs.sh /usr/share/greyhole/build_vfs.sh
+    
 	# WebUI
     install -m 0644 -D -p web-app/index.php /usr/share/greyhole/web-app/index.php
     install -m 0644 -D -p web-app/README /usr/share/greyhole/web-app/README
@@ -56,6 +59,8 @@ RUN <<EOF
     install -m 0644 -D -p web-app/views/status.php /usr/share/greyhole/web-app/views/status.php
     install -m 0644 -D -p web-app/views/storage_pool.php /usr/share/greyhole/web-app/views/storage_pool.php
     install -m 0644 -D -p web-app/views/trash.php /usr/share/greyhole/web-app/views/trash.php
+    
+    # Finalise install
     mkdir -p /var/cache/greyhole-dfree
     chmod 777 /var/cache/greyhole-dfree
     mv includes /usr/share/greyhole/

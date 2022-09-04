@@ -2,13 +2,15 @@
 
 FROM alpine:3.15
 
+ARG PHP_VERSION=php8
+
 RUN <<EOF
     set -x
     apk --no-cache add \
     samba-common-tools samba-client samba-server \
     bash ncurses curl python3 gcc libc-dev perl make rpcgen file ssmtp supervisor gnutls-dev zlib-dev rsyslog \
-    php8-cli php8-pdo_mysql php8-intl php8-mbstring php8-intl php8-mysqlnd php8-json php8-pcntl rsync lsof sysstat findutils gzip patch
-    ln -s /usr/bin/php8 /usr/bin/php
+    $PHP_VERSION-cli $PHP_VERSION-pdo_mysql $PHP_VERSION-intl $PHP_VERSION-mbstring $PHP_VERSION-intl $PHP_VERSION-mysqlnd $PHP_VERSION-json $PHP_VERSION-pcntl rsync lsof sysstat findutils gzip patch
+    ln -s /usr/bin/$PHP_VERSION /usr/bin/php
 EOF
 
 # Setup Greyhole for Samba
@@ -16,6 +18,7 @@ ADD --link --keep-git-dir=false https://github.com/gboudreau/Greyhole.git /Greyh
 RUN <<EOF 
     set -xe
     cd /Greyhole-master
+    # Greyhole
 	mkdir -p /var/spool/greyhole
 	chmod 777 /var/spool/greyhole
 	mkdir -p /usr/share/greyhole
@@ -62,13 +65,13 @@ RUN <<EOF
     ln -s /usr/share/greyhole/greyhole-dfree /usr/bin/greyhole-dfree
     ln -s /usr/share/greyhole/greyhole-php /usr/bin/greyhole-php
     ln -s /usr/share/greyhole/greyhole /usr/bin/cpgh
-	echo "include_path=.:/usr/share/php8:/usr/share/greyhole" > /etc/php8/conf.d/02_greyhole.ini
+	echo "include_path=.:/usr/share/$PHP_VERSION:/usr/share/greyhole" > /etc/$PHP_VERSION/conf.d/02_greyhole.ini
 EOF
 
 # Re-use pre-compiled .so or build a new one
 WORKDIR /usr/share/greyhole/
 #COPY alpine-samba-patches/*.patch ./
-COPY --chmod=755 --link install_greyhole_vfs.sh .
+COPY --chmod=755 --link install_greyhole_vfs.sh ./
 RUN bash ./install_greyhole_vfs.sh
 
 # Copy additional scripts

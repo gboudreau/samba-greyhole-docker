@@ -2,10 +2,12 @@
 
 FROM alpine:3.15
 
+# Add whichever Greyhole version you want. 'master' for the master branch, or versioned, e.g. GREYHOLE_VERSION=0.15.18
+ARG GREYHOLE_VERSION=master
 ARG PHP_VERSION=php8
 
 RUN <<EOF
-    set -x
+    set -xe
     apk --no-cache add \
     samba-common-tools samba-client samba-server \
     bash ncurses curl python3 gcc libc-dev perl make rpcgen file ssmtp supervisor gnutls-dev zlib-dev rsyslog \
@@ -14,7 +16,7 @@ RUN <<EOF
 EOF
 
 # Setup Greyhole for Samba
-ADD --link --keep-git-dir=false https://github.com/gboudreau/Greyhole.git /Greyhole-master
+ADD --link --keep-git-dir=false https://github.com/gboudreau/Greyhole.git#$GREYHOLE_VERSION /Greyhole-master
 
 WORKDIR /Greyhole-master
 RUN <<EOF 
@@ -77,7 +79,12 @@ EOF
 WORKDIR /usr/share/greyhole/
 #COPY alpine-samba-patches/*.patch ./
 COPY --chmod=755 --link install_greyhole_vfs.sh ./
-RUN bash ./install_greyhole_vfs.sh
+
+
+RUN <<EOF 
+    set -xe
+    bash ./install_greyhole_vfs.sh
+EOF
 
 # Copy additional scripts
 COPY --link --chmod=755 entrypoint.sh /entrypoint.sh

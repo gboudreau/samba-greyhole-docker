@@ -1,8 +1,8 @@
 # syntax = docker/dockerfile-upstream:master-labs
 
-FROM alpine:3.15
+FROM alpine:3.20
 
-ARG PHP_VERSION=php8
+ARG PHP_VERSION=php
 
 RUN <<EOF
 set -xe
@@ -81,7 +81,7 @@ ln -s /usr/share/greyhole/greyhole /usr/bin/greyhole
 ln -s /usr/share/greyhole/greyhole-dfree /usr/bin/greyhole-dfree
 ln -s /usr/share/greyhole/greyhole-php /usr/bin/greyhole-php
 ln -s /usr/share/greyhole/greyhole /usr/bin/cpgh
-echo "include_path=.:/usr/share/$PHP_VERSION:/usr/share/greyhole" > /etc/$PHP_VERSION/conf.d/02_greyhole.ini
+echo "include_path=.:/usr/share/php83:/usr/share/greyhole" > /etc/php83/conf.d/02_greyhole.ini
 
 # Re-use pre-compiled .so or build a new one \
 cd /usr/share/greyhole
